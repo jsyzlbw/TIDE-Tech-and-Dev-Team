@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "answer_completeness": {
+    "level": "incomplete",
+    "covered_points": [
+      "提到了可能使用贪心思想"
+    ],
+    "missing_points": [
+      "最小暂定距离顶点的选择",
+      "松弛操作",
+      "时间复杂度",
+      "非负权适用条件"
+    ],
+    "rationale": "提交内容过于简略且存在互相冲突的猜测，无法确认是否掌握算法步骤。"
+  },
+  "correctness": {
+    "judgment": "unable_to_determine",
+    "rationale": "现有表述不足以支持正确性判断，需要教师结合课程上下文人工核验。"
+  },
+  "major_issues": [
+    {
+      "code": "AMBIGUOUS_RESPONSE",
+      "title": "答案含义不明确",
+      "evidence": "答案同时猜测贪心和动态规划，但没有给出可核验的步骤或结论。",
+      "impact": "系统无法仅依据当前文本判断学生是否理解 Dijkstra 算法。"
+    }
+  ],
+  "suggestions": [
+    {
+      "priority": "high",
+      "action": "按选点、松弛、复杂度和适用条件四部分重新组织答案。",
+      "example": "先说明每轮选择暂定距离最小的顶点，再描述如何松弛其出边。"
+    }
+  ],
+  "score": {
+    "value": 45,
+    "grade": "D",
+    "confidence": 0.35
+  },
+  "limitations": [
+    "答案信息不足且含义模糊，本报告无法可靠判断正确性。",
+    "本报告仅依据提交文本评估，未执行代码，必须由教师审核。"
+  ],
+  "requires_human_review": true
+}

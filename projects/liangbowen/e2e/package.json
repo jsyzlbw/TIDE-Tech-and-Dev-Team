@@ -1,0 +1,22 @@
+{
+  "name": "ai-grading-e2e",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "npm@11.12.1",
+  "engines": {
+    "node": "^22.22.0 || >=24 <26",
+    "npm": ">=11 <12"
+  },
+  "scripts": {
+    "test": "npm run test:runner && python3 -u scripts/run_local_e2e.py",
+    "test:runner": "python3 -m unittest discover -s tests_runner -p 'test_*.py'",
+    "test:playwright": "playwright test",
+    "report": "playwright show-report ../artifacts/acceptance/playwright"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "@types/node": "26.1.1",
+    "typescript": "6.0.2"
+  }
+}

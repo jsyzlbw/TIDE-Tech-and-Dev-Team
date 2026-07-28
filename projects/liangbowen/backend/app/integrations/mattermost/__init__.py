@@ -1,0 +1,1 @@
+"""Mattermost Slash Command integration."""

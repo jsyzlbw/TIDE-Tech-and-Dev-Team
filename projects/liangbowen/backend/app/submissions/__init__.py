@@ -1,0 +1,1 @@
+"""Versioned student submission domain."""

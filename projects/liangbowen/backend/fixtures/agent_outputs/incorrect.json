@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "answer_completeness": {
+    "level": "incomplete",
+    "covered_points": [
+      "提到了从一个起点寻找路径"
+    ],
+    "missing_points": [
+      "最小暂定距离顶点的选择",
+      "松弛操作",
+      "时间复杂度",
+      "非负权适用条件"
+    ],
+    "rationale": "答案只复述了问题目标，没有说明 Dijkstra 算法的关键步骤。"
+  },
+  "correctness": {
+    "judgment": "incorrect",
+    "rationale": "答案声称每轮选择边权最小的边，这不是 Dijkstra 算法的选择规则。"
+  },
+  "major_issues": [
+    {
+      "code": "WRONG_SELECTION_RULE",
+      "title": "选择规则错误",
+      "evidence": "答案写道“每次选择图中权值最小的一条边”。",
+      "impact": "该规则更接近错误的贪心拼接，不能保证得到单源最短路径。"
+    }
+  ],
+  "suggestions": [
+    {
+      "priority": "high",
+      "action": "重新说明暂定距离、最小顶点选择和松弛三个核心步骤。",
+      "example": "初始化 dist[source]=0，每轮取出 dist 最小的未确定顶点，再松弛其出边。"
+    }
+  ],
+  "score": {
+    "value": 35,
+    "grade": "D",
+    "confidence": 0.94
+  },
+  "limitations": [
+    "本报告仅依据提交文本评估，未执行代码。"
+  ],
+  "requires_human_review": true
+}

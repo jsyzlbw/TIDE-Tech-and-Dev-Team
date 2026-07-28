@@ -1,0 +1,75 @@
+:root {
+  color-scheme: light;
+
+  /* Color — warm paper, archival ink, restrained review marks. */
+  --color-canvas: #e9e3d6;
+  --color-canvas-deep: #d8cfbd;
+  --color-paper: #f8f4e9;
+  --color-paper-raised: #fffdf7;
+  --color-ink: #171b20;
+  --color-ink-soft: #3f454c;
+  --color-muted: #5f615e;
+  --color-rule: #c9c0af;
+  --color-rule-strong: #8e877a;
+  --color-action: #284788;
+  --color-action-hover: #1c356d;
+  --color-action-soft: #e1e7f4;
+  --color-review: #8f500c;
+  --color-review-soft: #f4e6c8;
+  --color-confirmed: #2d684b;
+  --color-confirmed-soft: #dceadf;
+  --color-failed: #9e3b32;
+  --color-failed-soft: #f2ded9;
+
+  /* Type — editorial display, utilitarian interface, tabular evidence. */
+  --font-display: "Source Serif 4", "Iowan Old Style", "Songti SC", STSong, Georgia, serif;
+  --font-body: "IBM Plex Sans", "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  --font-size-00: 0.6875rem;
+  --font-size-0: 0.8125rem;
+  --font-size-1: 0.9375rem;
+  --font-size-2: 1.0625rem;
+  --font-size-3: clamp(1.35rem, 2vw, 1.8rem);
+  --font-size-hero: clamp(2.75rem, 7vw, 6.4rem);
+  --line-tight: 1.04;
+  --line-body: 1.68;
+  --tracking-label: 0.13em;
+  --tracking-display: -0.045em;
+
+  /* Space and baseline. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --baseline: 1.5rem;
+
+  /* Shape remains paper-like, not card-like. */
+  --radius-hairline: 2px;
+  --radius-control: 4px;
+  --radius-panel: 7px;
+  --radius-round: 999px;
+  --shadow-paper: 0 1px 0 rgb(255 255 255 / 70%), 0 24px 70px rgb(54 46 34 / 12%);
+  --shadow-control: 0 1px 2px rgb(23 27 32 / 10%);
+
+  /* Layering and motion. */
+  --z-paper: 1;
+  --z-masthead: 10;
+  --z-skip-link: 100;
+  --z-dialog: 200;
+  --motion-fast: 140ms;
+  --motion-standard: 180ms;
+  --ease-out: cubic-bezier(0.2, 0.72, 0.2, 1);
+  --focus-ring: 0 0 0 3px rgb(40 71 136 / 28%);
+
+  /* Layout. */
+  --page-max: 80rem;
+  --page-gutter: clamp(1rem, 4vw, 3.25rem);
+  --grid-gap: clamp(0.75rem, 1.6vw, 1.5rem);
+}

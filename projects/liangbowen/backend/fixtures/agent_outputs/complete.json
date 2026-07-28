@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "answer_completeness": {
+    "level": "complete",
+    "covered_points": [
+      "使用优先队列选择当前距离最小的顶点",
+      "通过松弛操作更新相邻顶点距离",
+      "说明二叉堆实现的复杂度为 O((V+E)logV)",
+      "指出算法只适用于非负权边"
+    ],
+    "missing_points": [],
+    "rationale": "答案完整覆盖算法步骤、复杂度和非负权适用条件。"
+  },
+  "correctness": {
+    "judgment": "correct",
+    "rationale": "算法描述、复杂度结论与适用条件均正确。"
+  },
+  "major_issues": [
+    {
+      "code": "MINOR_TERMINOLOGY",
+      "title": "术语可以更精确",
+      "evidence": "答案将堆中取出顶点描述为“删除最短路径”。",
+      "impact": "不影响算法结论，但可能让读者混淆顶点操作与路径删除。"
+    }
+  ],
+  "suggestions": [
+    {
+      "priority": "low",
+      "action": "将相关表述改为“取出当前暂定距离最小的顶点”。",
+      "example": "每轮从最小堆取出暂定距离最小且尚未确定的顶点。"
+    }
+  ],
+  "score": {
+    "value": 94,
+    "grade": "A",
+    "confidence": 0.96
+  },
+  "limitations": [
+    "本报告仅依据提交文本评估，未执行代码。"
+  ],
+  "requires_human_review": true
+}

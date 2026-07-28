@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "answer_completeness": {
+    "level": "partial",
+    "covered_points": [
+      "通过松弛操作更新相邻顶点距离",
+      "使用优先队列选择顶点"
+    ],
+    "missing_points": [
+      "二叉堆实现下的时间复杂度",
+      "边权必须非负的适用条件"
+    ],
+    "rationale": "答案说明了主要步骤，但没有完成复杂度和适用条件两项要求。"
+  },
+  "correctness": {
+    "judgment": "mostly_correct",
+    "rationale": "已描述的算法步骤方向正确，但结论缺少关键限制。"
+  },
+  "major_issues": [
+    {
+      "code": "MISSING_CONSTRAINT",
+      "title": "缺少非负权限制",
+      "evidence": "答案没有说明 Dijkstra 算法不能直接处理负权边。",
+      "impact": "在包含负权边的图上套用该结论可能得到错误最短路径。"
+    }
+  ],
+  "suggestions": [
+    {
+      "priority": "high",
+      "action": "补充非负权适用条件和二叉堆实现的复杂度。",
+      "example": "使用邻接表和二叉堆时复杂度为 O((V+E)logV)，且所有边权必须非负。"
+    }
+  ],
+  "score": {
+    "value": 72,
+    "grade": "C",
+    "confidence": 0.9
+  },
+  "limitations": [
+    "本报告仅依据提交文本评估，未执行代码。"
+  ],
+  "requires_human_review": true
+}

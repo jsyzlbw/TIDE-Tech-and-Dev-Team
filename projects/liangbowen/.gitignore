@@ -1,0 +1,40 @@
+.DS_Store
+.worktrees/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+service-account*.json
+secrets/
+
+# Python environments, caches, builds, and coverage
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+backend/build/
+backend/dist/
+backend/*.egg-info/
+
+# Frontend dependencies, builds, and coverage
+frontend/node_modules/
+e2e/node_modules/
+frontend/dist/
+frontend/build/
+frontend/coverage/
+frontend/.next/
+
+# Generated acceptance evidence (keep the directory contract in Git)
+artifacts/acceptance/*
+!artifacts/acceptance/.gitkeep

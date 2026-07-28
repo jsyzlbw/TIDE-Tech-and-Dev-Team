@@ -1,0 +1,233 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-grader}
+      POSTGRES_USER: ${POSTGRES_USER:-grader}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-grader}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  test-postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_TEST_DB:-grader_test}
+      POSTGRES_USER: ${POSTGRES_USER:-grader}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-grader}
+    ports:
+      - "127.0.0.1:${TEST_POSTGRES_PORT:-5433}:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+      start_period: 3s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "no"]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 3s
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: ${COMPOSE_DATABASE_URL:-postgresql+asyncpg://grader:grader@postgres:5432/grader}
+      REDIS_URL: ${COMPOSE_REDIS_URL:-redis://redis:6379/0}
+      JWT_SECRET: ${JWT_SECRET:-development-secret-change-me}
+      JWT_EXP_MINUTES: ${JWT_EXP_MINUTES:-60}
+      AGENT_PROVIDER: ${AGENT_PROVIDER:-mock}
+      AGENT_MOCK_FIXTURE: ${AGENT_MOCK_FIXTURE:-partial}
+      AGENT_BASE_URL: ${AGENT_BASE_URL:-https://api.openai.com/v1}
+      AGENT_MODEL: ${AGENT_MODEL:-grader-v1}
+      AGENT_RESPONSE_FORMAT: ${AGENT_RESPONSE_FORMAT:-json-schema}
+      AGENT_API_KEY: ${AGENT_API_KEY:-}
+      AGENT_ALLOW_INSECURE_HTTP: ${AGENT_ALLOW_INSECURE_HTTP:-false}
+      AGENT_TIMEOUT_SECONDS: ${AGENT_TIMEOUT_SECONDS:-30}
+      EVALUATION_DISPATCH_ENABLED: ${EVALUATION_DISPATCH_ENABLED:-true}
+      CELERY_TASK_ALWAYS_EAGER: ${CELERY_TASK_ALWAYS_EAGER:-false}
+      CORS_ORIGINS: '${CORS_ORIGINS:-["http://localhost:5173"]}'
+      MATTERMOST_COMMAND_TOKEN: ${MATTERMOST_COMMAND_TOKEN:-}
+      MATTERMOST_DEMO_SETUP_KEY: ${MATTERMOST_DEMO_SETUP_KEY:-}
+      MATTERMOST_ACTION_SECRET: ${MATTERMOST_ACTION_SECRET:-}
+      WEB_CONSOLE_URL: ${WEB_CONSOLE_URL:-}
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command:
+      - /bin/sh
+      - -ec
+      - exec uvicorn app.main:app --host 0.0.0.0 --port 8000
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.build_opener(urllib.request.ProxyHandler({})).open('http://127.0.0.1:8000/health/ready', timeout=2).read()
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: ${COMPOSE_DATABASE_URL:-postgresql+asyncpg://grader:grader@postgres:5432/grader}
+      REDIS_URL: ${COMPOSE_REDIS_URL:-redis://redis:6379/0}
+      JWT_SECRET: ${JWT_SECRET:-development-secret-change-me}
+      JWT_EXP_MINUTES: ${JWT_EXP_MINUTES:-60}
+      AGENT_PROVIDER: ${AGENT_PROVIDER:-mock}
+      AGENT_MOCK_FIXTURE: ${AGENT_MOCK_FIXTURE:-partial}
+      AGENT_BASE_URL: ${AGENT_BASE_URL:-https://api.openai.com/v1}
+      AGENT_MODEL: ${AGENT_MODEL:-grader-v1}
+      AGENT_RESPONSE_FORMAT: ${AGENT_RESPONSE_FORMAT:-json-schema}
+      AGENT_API_KEY: ${AGENT_API_KEY:-}
+      AGENT_ALLOW_INSECURE_HTTP: ${AGENT_ALLOW_INSECURE_HTTP:-false}
+      AGENT_TIMEOUT_SECONDS: ${AGENT_TIMEOUT_SECONDS:-30}
+      EVALUATION_DISPATCH_ENABLED: "false"
+      CELERY_TASK_ALWAYS_EAGER: ${CELERY_TASK_ALWAYS_EAGER:-false}
+      CORS_ORIGINS: '${CORS_ORIGINS:-["http://localhost:5173"]}'
+      MATTERMOST_URL: ${MATTERMOST_URL:-}
+      MATTERMOST_BOT_TOKEN: ${MATTERMOST_BOT_TOKEN:-}
+      MATTERMOST_BOT_USER_ID: ${MATTERMOST_BOT_USER_ID:-}
+      MATTERMOST_ACTION_SECRET: ${MATTERMOST_ACTION_SECRET:-}
+      MATTERMOST_ACTION_URL: ${MATTERMOST_ACTION_URL:-}
+      WEB_CONSOLE_URL: ${WEB_CONSOLE_URL:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.evaluations.worker.celery_app worker --loglevel=INFO -Q evaluations,notifications,maintenance
+
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: ${COMPOSE_DATABASE_URL:-postgresql+asyncpg://grader:grader@postgres:5432/grader}
+      REDIS_URL: ${COMPOSE_REDIS_URL:-redis://redis:6379/0}
+      JWT_SECRET: ${JWT_SECRET:-development-secret-change-me}
+      JWT_EXP_MINUTES: ${JWT_EXP_MINUTES:-60}
+      AGENT_PROVIDER: ${AGENT_PROVIDER:-mock}
+      AGENT_MOCK_FIXTURE: ${AGENT_MOCK_FIXTURE:-partial}
+      AGENT_BASE_URL: ${AGENT_BASE_URL:-https://api.openai.com/v1}
+      AGENT_MODEL: ${AGENT_MODEL:-grader-v1}
+      AGENT_RESPONSE_FORMAT: ${AGENT_RESPONSE_FORMAT:-json-schema}
+      AGENT_API_KEY: ${AGENT_API_KEY:-}
+      AGENT_ALLOW_INSECURE_HTTP: ${AGENT_ALLOW_INSECURE_HTTP:-false}
+      AGENT_TIMEOUT_SECONDS: ${AGENT_TIMEOUT_SECONDS:-30}
+      EVALUATION_DISPATCH_ENABLED: "false"
+      CELERY_TASK_ALWAYS_EAGER: ${CELERY_TASK_ALWAYS_EAGER:-false}
+      CORS_ORIGINS: '${CORS_ORIGINS:-["http://localhost:5173"]}'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.evaluations.worker.celery_app beat --loglevel=INFO --schedule=/tmp/celerybeat-schedule --pidfile=/tmp/celerybeat.pid
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  mattermost-config-check:
+    image: postgres:16-alpine
+    profiles: ["mattermost"]
+    restart: "no"
+    environment:
+      MATTERMOST_DB_PASSWORD: ${MATTERMOST_DB_PASSWORD:-mm-local-9Jv7wQ2xR5cN8kT4}
+    volumes:
+      - ./scripts/validate_mattermost_password.sh:/opt/grader/validate-mattermost-password.sh:ro
+    entrypoint: ["/bin/sh", "/opt/grader/validate-mattermost-password.sh"]
+
+  mattermost-db:
+    image: postgres:16-alpine
+    profiles: ["mattermost"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mattermost
+      POSTGRES_USER: mattermost
+      POSTGRES_PASSWORD: ${MATTERMOST_DB_PASSWORD:-mm-local-9Jv7wQ2xR5cN8kT4}
+    depends_on:
+      mattermost-config-check:
+        condition: service_completed_successfully
+    volumes:
+      - mattermost-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mattermost -d mattermost"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  mattermost:
+    image: mattermost/mattermost-team-edition:10.5
+    profiles: ["mattermost"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${MATTERMOST_PORT:-8065}:8065"
+    environment:
+      MM_SQLSETTINGS_DRIVERNAME: postgres
+      MM_SQLSETTINGS_DATASOURCE: postgres://mattermost:${MATTERMOST_DB_PASSWORD:-mm-local-9Jv7wQ2xR5cN8kT4}@mattermost-db:5432/mattermost?sslmode=disable&connect_timeout=10
+      MM_SERVICESETTINGS_SITEURL: ${MATTERMOST_SITEURL:-http://localhost:8065}
+      MM_SERVICESETTINGS_ENABLELOCALMODE: "true"
+      MM_SERVICESETTINGS_ENABLEDEVELOPER: "true"
+      MM_SERVICESETTINGS_ENABLEUSERACCESSTOKENS: "true"
+    depends_on:
+      mattermost-db:
+        condition: service_healthy
+    volumes:
+      - mattermost-data:/mattermost/data
+      - mattermost-config:/mattermost/config
+
+volumes:
+  postgres-data:
+  mattermost-db-data:
+  mattermost-data:
+  mattermost-config:

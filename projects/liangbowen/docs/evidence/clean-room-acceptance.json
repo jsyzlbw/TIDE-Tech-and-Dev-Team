@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "evidence_type": "redacted_clean_room_acceptance_summary",
+  "generated_at": "2026-07-28T05:51:45+08:00",
+  "source": {
+    "verified_commit": "b238a63bcb0c16f5b998650e71a517d96c23c350",
+    "tracked_files_only_at_start": true,
+    "environment_created_from": ".env.example",
+    "fresh_python_environment": true,
+    "fresh_frontend_install": true,
+    "fresh_e2e_install": true,
+    "raw_artifacts_committed": false
+  },
+  "environment": {
+    "os": "macOS 26.5.2 (25F84)",
+    "architecture": "arm64",
+    "python": "3.12.13",
+    "node": "25.9.0",
+    "npm": "11.12.1",
+    "postgresql": "18.4",
+    "docker_command_available": false
+  },
+  "runs": [
+    {
+      "mode": "strict",
+      "run_id": "20260728T054639609908+0800-e06781fae0",
+      "started_at": "2026-07-28T05:46:39.609931+08:00",
+      "finished_at": "2026-07-28T05:49:08.330419+08:00",
+      "overall_status": "failed",
+      "expected_blocker": "docker executable unavailable",
+      "error_fields": {
+        "cleanup_error_present": false,
+        "internal_error_present": false
+      },
+      "owned_process_cleanup": {
+        "verifier_postgresql_pid": 21587,
+        "verifier_postgresql_confirmed_exited": true,
+        "e2e_managed_processes_confirmed_stopped": true
+      },
+      "checks": {
+        "backend_unit": { "status": "passed", "returncode": 0, "duration_seconds": 119.275 },
+        "backend_acceptance": { "status": "passed", "returncode": 0, "duration_seconds": 1.776 },
+        "frontend_unit": { "status": "passed", "returncode": 0, "duration_seconds": 6.148 },
+        "frontend_build": { "status": "passed", "returncode": 0, "duration_seconds": 2.707 },
+        "compose_config": { "status": "blocked", "returncode": 127, "duration_seconds": 0.002 },
+        "api_ready": { "status": "blocked", "returncode": null, "duration_seconds": 0.0 },
+        "web_ready": { "status": "blocked", "returncode": null, "duration_seconds": 0.0 },
+        "e2e": { "status": "passed", "returncode": 0, "duration_seconds": 16.044 }
+      },
+      "test_totals": {
+        "backend_unit": 1509,
+        "backend_subtests": 34,
+        "backend_acceptance": 12,
+        "frontend_unit": 337,
+        "playwright": 4
+      },
+      "playwright_details": {
+        "passed": 4,
+        "duration_seconds": 9.4,
+        "seeded_reports_spec_duration_seconds": 1.9
+      }
+    },
+    {
+      "mode": "local-only",
+      "run_id": "20260728T054910890396+0800-2e7ed49426",
+      "started_at": "2026-07-28T05:49:10.890419+08:00",
+      "finished_at": "2026-07-28T05:51:33.993537+08:00",
+      "overall_status": "passed",
+      "error_fields": {
+        "cleanup_error_present": false,
+        "internal_error_present": false
+      },
+      "owned_process_cleanup": {
+        "verifier_postgresql_pid": 23579,
+        "verifier_postgresql_confirmed_exited": true,
+        "e2e_managed_processes_confirmed_stopped": true
+      },
+      "checks": {
+        "backend_unit": { "status": "passed", "returncode": 0, "duration_seconds": 116.791 },
+        "backend_acceptance": { "status": "passed", "returncode": 0, "duration_seconds": 1.719 },
+        "frontend_unit": { "status": "passed", "returncode": 0, "duration_seconds": 5.363 },
+        "frontend_build": { "status": "passed", "returncode": 0, "duration_seconds": 2.065 },
+        "compose_config": { "status": "skipped", "returncode": null, "duration_seconds": 0.0 },
+        "api_ready": { "status": "skipped", "returncode": null, "duration_seconds": 0.0 },
+        "web_ready": { "status": "skipped", "returncode": null, "duration_seconds": 0.0 },
+        "e2e": { "status": "passed", "returncode": 0, "duration_seconds": 14.65 }
+      },
+      "test_totals": {
+        "backend_unit": 1509,
+        "backend_subtests": 34,
+        "backend_acceptance": 12,
+        "frontend_unit": 337,
+        "playwright": 4
+      },
+      "playwright_details": {
+        "passed": 4,
+        "duration_seconds": 9.1,
+        "seeded_reports_spec_duration_seconds": 1.8
+      }
+    }
+  ]
+}
